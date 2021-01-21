@@ -1,5 +1,7 @@
 import pytest
-from main import run_search, Option
+
+from service import Option
+from main import run_search
 
 
 @pytest.mark.parametrize("option", tuple(Option))

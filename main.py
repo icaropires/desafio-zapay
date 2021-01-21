@@ -4,13 +4,8 @@ import sys
 import json
 from service import SPService
 from parser import SPParser
-from enum import Enum
 
-
-class Option(Enum):
-    TICKET = 'ticket'
-    IPVA = 'ipva'
-    DPVAT = 'dpvat'
+from service import Option
 
 
 def get_user_input():
@@ -51,6 +46,8 @@ def build_options(search_result):
 
 
 def run_search(debt_option, license_plate, renavam):
+    debt_option = Option(debt_option)
+
     sp_service = SPService(
         license_plate=license_plate,
         renavam=renavam,
@@ -66,8 +63,7 @@ def run_search(debt_option, license_plate, renavam):
     options = build_options(search_result)
 
     try:
-        option = Option(debt_option)
-        run_option = options[option]
+        run_option = options[debt_option]
     except KeyError:
         valid_options = ','.join(options.keys())
 
