@@ -71,7 +71,7 @@ def run_search(debt_option, license_plate, renavam):
     except KeyError:
         valid_options = ','.join(options.keys())
 
-        print("Opção inválida. Escolha entre: {valid_options}")
+        print(f"Opção inválida. Escolha entre: {valid_options}")
         sys.exit(1)
 
     return run_option()
