@@ -35,7 +35,7 @@ jobs:
 
     - name: Test
       run: |
-        python3 -m pytest --cov=. tests
+        cd app && python3 -m pytest --cov=. tests
 
     - name: Codecov
       uses: codecov/codecov-action@v1.0.13
