@@ -8,6 +8,9 @@ from parser import SPParser
 
 
 def get_user_input():
+    """
+    Captura a entrada do usuário pela CLI.
+    """
     valid_options = set(o.value for o in DebtOption)
 
     try:
@@ -33,12 +36,18 @@ def get_user_input():
 
 
 def parse(raw_query, debt_option):
+    """
+    Aplica o parser no resultado da query.
+    """
     parser = SPParser(raw_query)
 
     return parser.collect_debts(debt_option)
 
 
 def run_query(debt_option, license_plate, renavam):
+    """
+    Invoca o serviço para realizar busca na API.
+    """
     debt_option = DebtOption(debt_option)
 
     sp_service = SPService(
@@ -47,7 +56,11 @@ def run_query(debt_option, license_plate, renavam):
         debt_option=debt_option
     )
 
-    raw_query = sp_service.debt_search()
+    try:
+        raw_query = sp_service.debt_search()
+    except Exception as error:
+        print(f"Não foi possível realizar a busca: {error}")
+        sys.exit(1)
 
     return parse(raw_query, debt_option)
 

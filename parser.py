@@ -8,6 +8,9 @@ class SPParser:
         self._data = data
 
     def collect_debts(self, debt_option):
+        """
+        Coleta uma lista de débitos de acordo a opção recebida.
+        """
         parsers = {
             DebtOption.TICKET: ('Multas', self._parse_ticket),
             DebtOption.IPVA: ('IPVAs', self._parse_ipva),
@@ -29,10 +32,17 @@ class SPParser:
         return [method(debt) for debt in debts]
 
     def get_debts_from_json(self, category):
+        """
+        Retorna os débitos de uma determinada categoria da
+        estrutura de dados interna.
+        """
         return self._data.get(category)
 
     @staticmethod
     def _parse_ticket(debt):
+        """
+        Formata os dados de multas.
+        """
         return {
             'amount': float(debt.get('Valor'))/100,
             'auto_infraction': debt.get('AIIP'),
@@ -43,6 +53,9 @@ class SPParser:
 
     @staticmethod
     def _parse_ipva(debt):
+        """
+        Formata os dados de IPVA.
+        """
         year = debt.get('Exercicio')
         description = f"IPVA {debt.get('Exercicio')}"
 
@@ -69,6 +82,9 @@ class SPParser:
 
     @staticmethod
     def _parse_insurance(debt):
+        """
+        Formata os dados de seguros, atualmente, apenas DPVAT.
+        """
         return {
             'amount': float(debt.get('Valor'))/100,
             'description': debt.get(
@@ -82,6 +98,9 @@ class SPParser:
 
     @staticmethod
     def _parse_licensing(debt):
+        """
+        Formata os dados de Licenciamento.
+        """
         return {
             "amount": float(debt.get('Valor'))/100,
             "title": f"Licenciamento {debt['Exercicio']}",

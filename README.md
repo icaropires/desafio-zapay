@@ -1,6 +1,7 @@
 # Desafio - Zapay
 
-![CI](https://github.com/icaropires/desafio-zapay/workflows/CI/badge.svg)
+[![CI](https://github.com/icaropires/desafio-zapay/workflows/CI/badge.svg)](https://github.com/icaropires/desafio-zapay/actions?query=workflow%3ACI)
+[![Maintainability](https://api.codeclimate.com/v1/badges/dc1cb7ea704a290e125e/maintainability)](https://codeclimate.com/github/icaropires/desafio-zapay/maintainability)
 
 ## Executando os testes
 

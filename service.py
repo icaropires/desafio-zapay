@@ -37,6 +37,9 @@ class SPService:
         self._normalize_license_plate()
 
     def _normalize_license_plate(self):
+        """
+        Transforma a placa para o padrão antigo, se for mercosul.
+        """
         mapping = {k: str(v) for v, k in enumerate('ABCDEFGHIJ')}
 
         change_index = 4
@@ -49,6 +52,9 @@ class SPService:
         self.license_plate = plate
 
     def _connect_to_api(self, api_method):
+        """
+        Se conecta à API.
+        """
         self._api[api_method] = API(self.license_plate,
                                     self.renavam, api_method)
 
@@ -70,6 +76,9 @@ class SPService:
         return self._api[api_method].fetch()
 
     def _query_debt_option(self, debt_option):
+        """
+        Dado a opção de busca, realiza a query na API
+        """
         option_to_api = {
             DebtOption.TICKET: ApiMethod.QUERY_TICKETS,
             DebtOption.IPVA: ApiMethod.QUERY_IPVA,
@@ -79,8 +88,9 @@ class SPService:
 
         try:
             api_method = option_to_api[debt_option]
-        except KeyError:
-            raise RuntimeError(f"Invalid debt_option: '{debt_option}'")
+        except KeyError as error:
+            error_msg = f"Invalid debt_option: '{debt_option}'"
+            raise RuntimeError(error_msg) from error
 
         response_json = self.get_json_response(
             api_method,
@@ -94,6 +104,9 @@ class SPService:
         return response_json
 
     def _query_all_debt_options(self):
+        """
+        Realiza busca na API para todas as opções de débito
+        """
         responses = (self._query_debt_option(m) for m in DebtOption
                      if m != DebtOption.ALL)
 
@@ -105,6 +118,10 @@ class SPService:
 
     @staticmethod
     def _normalize_licensing(response):
+        """
+        Transforma o resultado da query do atributo de licensiamento para o
+        mesmo formato dos outros atributos.
+        """
         normalized = {}
 
         normalized['Licenciamentos'] = {
