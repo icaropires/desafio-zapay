@@ -33,8 +33,8 @@ def get_user_input():
     return debt_option, license_plate, renavam
 
 
-def build_options(search_result):
-    parser = SPParser(search_result)
+def build_options(query_result):  # TODO: this is not semantic
+    parser = SPParser(query_result)
 
     options = {
         Option.TICKET: parser.collect_ticket_debts,
@@ -45,7 +45,7 @@ def build_options(search_result):
     return options
 
 
-def run_search(debt_option, license_plate, renavam):
+def run_query(debt_option, license_plate, renavam):
     debt_option = Option(debt_option)
 
     sp_service = SPService(
@@ -55,12 +55,12 @@ def run_search(debt_option, license_plate, renavam):
     )
 
     try:
-        search_result = sp_service.debt_search()
-    except Exception as exc:
+        query_result = sp_service.debt_search()
+    except Exception as exc:  # TODO: better handling
         print(exc)
         sys.exit(1)
 
-    options = build_options(search_result)
+    options = build_options(query_result)
 
     try:
         run_option = options[debt_option]
@@ -76,7 +76,7 @@ def run_search(debt_option, license_plate, renavam):
 if __name__ == "__main__":
     debt_option, license_plate, renavam = get_user_input()
 
-    result = run_search(debt_option, license_plate, renavam)
+    result = run_query(debt_option, license_plate, renavam)
 
     print(
         json.dumps(result, indent=4, ensure_ascii=False)

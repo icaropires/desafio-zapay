@@ -4,9 +4,15 @@ from api import API
 
 
 class Option(Enum):
-    TICKET = 'ticket'
+    TICKET = 'tickets'
     IPVA = 'ipva'
     DPVAT = 'dpvat'
+
+
+class ApiMethod(Enum):
+    QUERY_TICKETS = 'ConsultaMultas'
+    QUERY_IPVA = 'ConsultaIPVA'
+    QUERY_DPVAT = 'ConsultaDPVAT'
 
 
 class SPService:
@@ -25,16 +31,19 @@ class SPService:
 
         self._api = {}
 
-    def _connect(self, method):
+    def _connect_to_api(self, method):
         self._api[method] = API(self.license_plate, self.renavam, method)
 
     def get_json_response(self, method, *, enforce_connection=False):
         """
         Pega a resposta da requisição em json.
         """
+        method = method.value
+
+        # Connect just once
         if self._api.get(method) is None:  # Not connected
             if enforce_connection:
-                self._connect(method)
+                self._connect_to_api(method)
             else:
                 raise RuntimeError(
                     f"Not connected to API for method: '{method}'"
@@ -48,9 +57,9 @@ class SPService:
         """
 
         option_to_api = {
-            self.debt_option.TICKET: "ConsultaMultas",
-            self.debt_option.IPVA: "ConsultaIPVA",
-            self.debt_option.DPVAT: "ConsultaDPVAT"
+            self.debt_option.TICKET: ApiMethod.QUERY_TICKETS,
+            self.debt_option.IPVA: ApiMethod.QUERY_IPVA,
+            self.debt_option.DPVAT: ApiMethod.QUERY_DPVAT,
         }
 
         try:
@@ -64,13 +73,9 @@ class SPService:
         )
 
         debts = {
-            'IPVAs': response_json.get('IPVAs', {}),
-            'DPVATs': response_json.get('DPVATs', {}),
-            'Multas': response_json.get('Multas', {}),
+            'IPVAs': response_json.get('IPVAs'),
+            'DPVATs': response_json.get('DPVATs'),
+            'Multas': response_json.get('Multas'),
         }
-
-        for debt in debts:
-            if debts[debt] == {}:
-                debts[debt] = None
 
         return debts
