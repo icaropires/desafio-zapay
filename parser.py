@@ -1,3 +1,5 @@
+from service import DebtOption
+
 UNIQUE_INSTALLMENTS = frozenset([0, 7, 8])
 
 
@@ -5,14 +7,18 @@ class SPParser:
     def __init__(self, data):
         self._data = data
 
-    def collect_debts(self, option):
+    def collect_debts(self, debt_option):
         parsers = {
-            option.TICKET: ('Multas', self._parse_ticket),
-            option.IPVA: ('IPVAs', self._parse_ipva),
-            option.DPVAT: ('DPVATs', self._parse_insurance),
+            debt_option.TICKET: ('Multas', self._parse_ticket),
+            debt_option.IPVA: ('IPVAs', self._parse_ipva),
+            debt_option.DPVAT: ('DPVATs', self._parse_insurance),
         }
 
-        main_key, method = parsers[option]
+        if debt_option == DebtOption.ALL:
+            debts = (self.collect_debts(option) for option in parsers)
+            return [debt for debt_list in debts for debt in debt_list]
+
+        main_key, method = parsers[debt_option]
 
         debts = self.get_debts_from_json(main_key)
 

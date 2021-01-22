@@ -1,32 +1,49 @@
 import pytest
 
-from service import Option
+from service import DebtOption
 from main import run_query
 
 
-@pytest.mark.parametrize("option,keys", [
-    (Option.TICKET, ("amount", "description", "auto_infraction", "title",
-                                                                 "type")),
+DEBT_OPTIONS_KEYS = {
+    DebtOption.TICKET: ("amount", "description",
+                        "auto_infraction", "title", "type"),
 
-    (Option.DPVAT, ("amount", "description", "title", "type", "year")),
+    DebtOption.DPVAT: ("amount", "description", "title", "type", "year"),
 
-    (Option.IPVA, ("amount", "description", "title", "type",
-                                                     "year", "installment")),
-])
-def test_run_query(option, keys):
-    # Num caso real teria que garantir que existem registros primeiro
-    result = run_query(option.value, "ABC1234", "11111111111")
+    DebtOption.IPVA: ("amount", "description", "title",
+                      "type", "year", "installment"),
+}
 
-    assert result
+DEBT_OPTION_TYPES = {
+    DebtOption.TICKET: "ticket",
+    DebtOption.IPVA: "ipva",
+    DebtOption.DPVAT: "insurance"
+}
 
-    first = result[0]
 
-    assert set(first.keys()) == set(keys)
+@pytest.mark.parametrize(
+    "debt_option,expected_keys",
+    DEBT_OPTIONS_KEYS.items()
+)
+def test_run_query(debt_option, expected_keys):
+    # Num caso real teria que garantir que existem registros
+    results = run_query(debt_option, "ABC1234", "11111111111")
 
-    expected_types = {
-        Option.TICKET: "ticket",
-        Option.IPVA: "ipva",
-        Option.DPVAT: "insurance"
-    }
+    assert results
 
-    assert first["type"] == expected_types[option]
+    expected_keys = DEBT_OPTIONS_KEYS[debt_option]
+
+    for result in results:
+        assert set(result.keys()) == set(expected_keys)
+        assert result["type"] == DEBT_OPTION_TYPES[debt_option]
+
+
+def test_run_query_all():
+    # Num caso real teria que garantir que existem registros
+    results = run_query(DebtOption.ALL, "ABC1234", "11111111111")
+
+    assert results
+
+    types = set(result['type'] for result in results)
+
+    assert types == set(DEBT_OPTION_TYPES.values())

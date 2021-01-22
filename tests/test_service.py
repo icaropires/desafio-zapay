@@ -1,20 +1,20 @@
 import pytest
-from service import SPService, Option
+from service import SPService, DebtOption
 
 
-@pytest.mark.parametrize("option,main_key,inner_keys", [
+@pytest.mark.parametrize("debt_option,main_key,inner_keys", [
     # Eventually, 'Guia' appears as a key for 'Multas' but not always
-    (Option.TICKET, "Multas",
+    (DebtOption.TICKET, "Multas",
         ('AIIP', 'Valor', 'DescricaoEnquadramento')),
 
-    (Option.DPVAT, "DPVATs",
+    (DebtOption.DPVAT, "DPVATs",
         ('Valor', 'Exercicio')),
 
-    (Option.IPVA, "IPVAs",
+    (DebtOption.IPVA, "IPVAs",
         ('Cota', 'Valor', 'Exercicio')),
 ])
-def test_debt_search(option, main_key, inner_keys):
-    sp_service = SPService(option, 'ABC1234', '11111111111')
+def test_debt_search(debt_option, main_key, inner_keys):
+    sp_service = SPService(debt_option, 'ABC1234', '11111111111')
     result = sp_service.debt_search()
 
     for key, values in result.items():
@@ -22,5 +22,15 @@ def test_debt_search(option, main_key, inner_keys):
             assert values is None
             continue
 
+        assert values
+
         for element in values:
             assert set(element.keys()) >= set(inner_keys)
+
+
+def test_debt_search_all():
+    sp_service = SPService(DebtOption.ALL, 'ABC1234', '11111111111')
+    result = sp_service.debt_search()
+
+    for value in result.values():
+        assert value is not None

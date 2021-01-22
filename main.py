@@ -3,12 +3,12 @@
 import sys
 import json
 
-from service import SPService, Option
+from service import SPService, DebtOption
 from parser import SPParser
 
 
 def get_user_input():
-    valid_options = tuple(o.value for o in Option)
+    valid_options = tuple(o.value for o in DebtOption)
 
     try:
         _, debt_option, license_plate, renavam = sys.argv
@@ -39,7 +39,7 @@ def parse(raw_query, debt_option):
 
 
 def run_query(debt_option, license_plate, renavam):
-    debt_option = Option(debt_option)
+    debt_option = DebtOption(debt_option)
 
     sp_service = SPService(
         license_plate=license_plate,
@@ -47,11 +47,7 @@ def run_query(debt_option, license_plate, renavam):
         debt_option=debt_option
     )
 
-    # try:
     raw_query = sp_service.debt_search()
-    # except Exception as exc:  # TODO: better handling
-    #     print(exc)
-    #     sys.exit(1)
 
     return parse(raw_query, debt_option)
 
