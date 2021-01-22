@@ -34,6 +34,20 @@ class SPService:
 
         self._api = {}
 
+        self._normalize_license_plate()
+
+    def _normalize_license_plate(self):
+        mapping = {k: str(v) for v, k in enumerate('ABCDEFGHIJ')}
+
+        change_index = 4
+        old_char = self.license_plate[change_index]
+        new_char = mapping.get(old_char, old_char)
+
+        plate = self.license_plate
+        plate = plate[:change_index] + new_char + plate[change_index+1:]
+
+        self.license_plate = plate
+
     def _connect_to_api(self, api_method):
         self._api[api_method] = API(self.license_plate,
                                     self.renavam, api_method)
