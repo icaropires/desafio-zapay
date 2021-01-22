@@ -9,9 +9,10 @@ class SPParser:
 
     def collect_debts(self, debt_option):
         parsers = {
-            debt_option.TICKET: ('Multas', self._parse_ticket),
-            debt_option.IPVA: ('IPVAs', self._parse_ipva),
-            debt_option.DPVAT: ('DPVATs', self._parse_insurance),
+            DebtOption.TICKET: ('Multas', self._parse_ticket),
+            DebtOption.IPVA: ('IPVAs', self._parse_ipva),
+            DebtOption.DPVAT: ('DPVATs', self._parse_insurance),
+            DebtOption.LICENSING: ('Licenciamentos', self._parse_licensing),
         }
 
         if debt_option == DebtOption.ALL:
@@ -76,5 +77,15 @@ class SPParser:
             ),
             'title': 'Seguro Obrigatório',
             'type': 'insurance',
-            'year': debt.get('Exercicio'),
+            'year': debt['Exercicio'],
+        }
+
+    @staticmethod
+    def _parse_licensing(debt):
+        return {
+            "amount": float(debt.get('Valor'))/100,
+            "title": f"Licenciamento {debt['Exercicio']}",
+            "description": "Licenciamento do Veículo",
+            "year": debt["Exercicio"],
+            "type": "licensing"
         }

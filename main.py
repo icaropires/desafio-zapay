@@ -8,7 +8,7 @@ from parser import SPParser
 
 
 def get_user_input():
-    valid_options = tuple(o.value for o in DebtOption)
+    valid_options = set(o.value for o in DebtOption)
 
     try:
         _, debt_option, license_plate, renavam = sys.argv

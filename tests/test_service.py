@@ -12,6 +12,9 @@ from service import SPService, DebtOption
 
     (DebtOption.IPVA, "IPVAs",
         ('Cota', 'Valor', 'Exercicio')),
+
+    (DebtOption.LICENSING, "Licenciamentos",
+        ('Valor', 'Exercicio')),
 ])
 def test_debt_search(debt_option, main_key, inner_keys):
     sp_service = SPService(debt_option, 'ABC1234', '11111111111')

@@ -12,12 +12,15 @@ DEBT_OPTIONS_KEYS = {
 
     DebtOption.IPVA: ("amount", "description", "title",
                       "type", "year", "installment"),
+
+    DebtOption.LICENSING: ("amount", "description", "title", "type", "year"),
 }
 
 DEBT_OPTION_TYPES = {
     DebtOption.TICKET: "ticket",
     DebtOption.IPVA: "ipva",
-    DebtOption.DPVAT: "insurance"
+    DebtOption.DPVAT: "insurance",
+    DebtOption.LICENSING: "licensing",
 }
 
 

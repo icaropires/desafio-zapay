@@ -8,12 +8,14 @@ class DebtOption(Enum):
     TICKET = 'tickets'
     IPVA = 'ipva'
     DPVAT = 'dpvat'
+    LICENSING = 'licensing'
 
 
 class ApiMethod(Enum):
     QUERY_TICKETS = 'ConsultaMultas'
     QUERY_IPVA = 'ConsultaIPVA'
     QUERY_DPVAT = 'ConsultaDPVAT'
+    QUERY_LICENSING = 'ConsultaLicenciamento'
 
 
 class SPService:
@@ -55,9 +57,10 @@ class SPService:
 
     def _query_debt_option(self, debt_option):
         option_to_api = {
-            debt_option.TICKET: ApiMethod.QUERY_TICKETS,
-            debt_option.IPVA: ApiMethod.QUERY_IPVA,
-            debt_option.DPVAT: ApiMethod.QUERY_DPVAT,
+            DebtOption.TICKET: ApiMethod.QUERY_TICKETS,
+            DebtOption.IPVA: ApiMethod.QUERY_IPVA,
+            DebtOption.DPVAT: ApiMethod.QUERY_DPVAT,
+            DebtOption.LICENSING: ApiMethod.QUERY_LICENSING,
         }
 
         try:
@@ -69,6 +72,10 @@ class SPService:
             api_method,
             enforce_connection=True
         )
+
+        # Special handling for licensing
+        if debt_option == DebtOption.LICENSING:
+            response_json = self._normalize_licensing(response_json)
 
         return response_json
 
@@ -82,6 +89,21 @@ class SPService:
 
         return response_json
 
+    @staticmethod
+    def _normalize_licensing(response):
+        normalized = {}
+
+        normalized['Licenciamentos'] = {
+            'Licenciamento': [
+                {
+                    'Valor': response['TaxaLicenciamento'],
+                    'Exercicio': response['Exercicio'],
+                }
+            ]
+        }
+
+        return normalized
+
     def debt_search(self):
         """
         Pega os débitos de acordo com a opção passada.
@@ -94,11 +116,13 @@ class SPService:
         ipvas = response_json.get('IPVAs') or {}
         dpvats = response_json.get('DPVATs') or {}
         tickets = response_json.get('Multas') or {}
+        licensings = response_json.get('Licenciamentos') or {}
 
         debts = {
             'IPVAs': ipvas.get('IPVA'),
             'DPVATs': dpvats.get('DPVAT'),
             'Multas': tickets.get('Multa'),
+            'Licenciamentos': licensings.get('Licenciamento'),
         }
 
         return debts
