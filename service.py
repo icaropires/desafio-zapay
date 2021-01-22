@@ -72,10 +72,14 @@ class SPService:
             enforce_connection=True
         )
 
+        ipvas = response_json.get('IPVAs') or {}
+        dpvats = response_json.get('DPVATs') or {}
+        tickets = response_json.get('Multas') or {}
+
         debts = {
-            'IPVAs': response_json.get('IPVAs'),
-            'DPVATs': response_json.get('DPVATs'),
-            'Multas': response_json.get('Multas'),
+            'IPVAs': ipvas.get('IPVA'),
+            'DPVATs': dpvats.get('DPVAT'),
+            'Multas': tickets.get('Multa'),
         }
 
         return debts

@@ -19,8 +19,6 @@ class SPParser:
         if debts is None:
             return []
 
-        debts = debts[main_key[:-1]]  # TODO: remove
-
         return [method(debt) for debt in debts]
 
     def get_debts_from_json(self, category):
@@ -56,7 +54,6 @@ class SPParser:
         }
 
         if installment is not None:
-            # Why change 'Única' to 'unique'?
             installment = 'unique' if is_installment_unique else installment
 
             formatted['installment'] = installment
