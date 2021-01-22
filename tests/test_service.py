@@ -14,7 +14,7 @@ from service import SPService, Option
         ('Cota', 'Valor', 'Exercicio')),
 ])
 def test_debt_search(option, main_key, main_inner_key, inner_keys):
-    sp_service = SPService(option, 'ABC1234', '11111111111')    
+    sp_service = SPService(option, 'ABC1234', '11111111111')
     result = sp_service.debt_search()
 
     for key, value in result.items():

@@ -2,10 +2,9 @@
 
 import sys
 import json
-from service import SPService
-from parser import SPParser
 
-from service import Option
+from service import SPService, Option
+from parser import SPParser
 
 
 def get_user_input():
@@ -33,16 +32,10 @@ def get_user_input():
     return debt_option, license_plate, renavam
 
 
-def build_options(query_result):  # TODO: this is not semantic
-    parser = SPParser(query_result)
+def parse(raw_query, debt_option):
+    parser = SPParser(raw_query)
 
-    options = {
-        Option.TICKET: parser.collect_ticket_debts,
-        Option.IPVA: parser.collect_ipva_debts,
-        Option.DPVAT: parser.collect_insurance_debts,
-    }
-
-    return options
+    return parser.collect_debts(debt_option)
 
 
 def run_query(debt_option, license_plate, renavam):
@@ -54,23 +47,13 @@ def run_query(debt_option, license_plate, renavam):
         debt_option=debt_option
     )
 
-    try:
-        query_result = sp_service.debt_search()
-    except Exception as exc:  # TODO: better handling
-        print(exc)
-        sys.exit(1)
+    # try:
+    raw_query = sp_service.debt_search()
+    # except Exception as exc:  # TODO: better handling
+    #     print(exc)
+    #     sys.exit(1)
 
-    options = build_options(query_result)
-
-    try:
-        run_option = options[debt_option]
-    except KeyError:
-        valid_options = ','.join(options.keys())
-
-        print(f"Opção inválida. Escolha entre: {valid_options}")
-        sys.exit(1)
-
-    return run_option()
+    return parse(raw_query, debt_option)
 
 
 if __name__ == "__main__":
