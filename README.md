@@ -4,7 +4,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/dc1cb7ea704a290e125e/maintainability)](https://codeclimate.com/github/icaropires/desafio-zapay/maintainability)
 [![codecov](https://codecov.io/gh/icaropires/desafio-zapay/branch/main/graph/badge.svg?token=I001DHBL7A)](https://codecov.io/gh/icaropires/desafio-zapay)
 
-Repositório contendo resultado ao desafio técnico para vaga de desenvolvedor backend para a [Zapay Pagamentos](https://usezapay.com.br/). Para mais detalhes, consulte o [LEIA-ME](./LEIA-ME.pdf).
+Repositório contendo meu resultado do desafio técnico para vaga de desenvolvedor back-end na [Zapay Pagamentos](https://usezapay.com.br/). Para mais detalhes, consulte o [LEIA-ME](./LEIA-ME.pdf).
 
 ## Instalando
 
@@ -27,9 +27,16 @@ A sintaxe da CLI é a seguinte:
 $ python3 main.py [all|tickets|ipva|dpvat|licensing] [placa_do_veículo] [renavam_do_veículo]
 ```
 
+Exemplo que busca todos os débitos de um veículo com placa `ABC1C34` e renavam `11111111111`:
+
+``` bash
+# De dentro da pasta app
+$ python3 main.py all ABC1C34 11111111111
+```
+
 ## Executando os testes
 
-Para executar os testes, instale o `pytest` e utilize algum dos seguintes comandos na `app`:
+Para executar os testes, instale as dependências do `requirements-dev.txt` e utilize algum dos seguintes comandos de **dentro da pasta `app`**:
 
 ``` python3
 $ python3 -m pytest
