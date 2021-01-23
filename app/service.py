@@ -56,13 +56,12 @@ class SPService:
         Se conecta à API.
         """
         self._api[api_method] = API(self.license_plate,
-                                    self.renavam, api_method)
+                                    self.renavam, api_method.value)
 
     def get_json_response(self, api_method, *, enforce_connection=False):
         """
         Pega a resposta da requisição em json.
         """
-        api_method = api_method.value
 
         # Connect just once
         if self._api.get(api_method) is None:  # Not connected

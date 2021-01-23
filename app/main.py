@@ -3,15 +3,15 @@
 import sys
 import json
 
-from service import SPService, DebtOption
 from parser import SPParser
+from service import SPService, DebtOption
 
 
 def get_user_input():
     """
     Captura a entrada do usuário pela CLI.
     """
-    valid_options = set(o.value for o in DebtOption)
+    valid_options = frozenset(o.value for o in DebtOption)
 
     try:
         _, debt_option, license_plate, renavam = sys.argv

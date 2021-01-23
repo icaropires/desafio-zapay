@@ -1,23 +1,32 @@
 import pytest
-from service import SPService, DebtOption
+from service import SPService, DebtOption, ApiMethod
 
 
-@pytest.mark.parametrize("debt_option,main_key,inner_keys", [
+@pytest.mark.parametrize("debt_option,main_key,inner_keys,api_method", [
     # Eventually, 'Guia' appears as a key for 'Multas' but not always
     (DebtOption.TICKET, "Multas",
-        ('AIIP', 'Valor', 'DescricaoEnquadramento')),
+        ('AIIP', 'Valor', 'DescricaoEnquadramento'), ApiMethod.QUERY_TICKETS),
 
     (DebtOption.DPVAT, "DPVATs",
-        ('Valor', 'Exercicio')),
+        ('Valor', 'Exercicio'), ApiMethod.QUERY_DPVAT),
 
     (DebtOption.IPVA, "IPVAs",
-        ('Cota', 'Valor', 'Exercicio')),
+        ('Cota', 'Valor', 'Exercicio'), ApiMethod.QUERY_IPVA),
 
     (DebtOption.LICENSING, "Licenciamentos",
-        ('Valor', 'Exercicio')),
+        ('Valor', 'Exercicio'), ApiMethod.QUERY_LICENSING),
 ])
-def test_debt_search(debt_option, main_key, inner_keys):
+def test_debt_search(mocker, debt_option, main_key, inner_keys,
+                     api_method, api_data):
+
     sp_service = SPService(debt_option, 'ABC1234', '11111111111')
+
+    # A classe API do api.py já é um mock, mas simulando aqui um caso real
+    #   de uso do mock para satisfazer a atividade BÔNUS 5 do LEIA-ME.pdf
+    mock_api = mocker.Mock()
+    mock_api.fetch.return_value = api_data[api_method.value]
+    sp_service._api[api_method] = mock_api
+
     result = sp_service.debt_search()
 
     for key, values in result.items():
